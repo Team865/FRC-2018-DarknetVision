@@ -16,6 +16,8 @@ cfg/
 x64
 .fuse*
 
+.vs/
+
 # OS Generated #
 .DS_Store*
 ehthumbs.db
