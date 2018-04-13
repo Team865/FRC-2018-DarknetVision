@@ -513,7 +513,7 @@ void show_image_cv(image p, const char *name)
 		}
 
 		cvWriteFrame(output_video, disp);
-		printf("\n cvWriteFrame \n");
+		//printf("\n cvWriteFrame \n");
 	}
 
     cvReleaseImage(&disp);

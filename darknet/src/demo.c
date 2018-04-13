@@ -12,6 +12,7 @@
 #include <winsock.h>
 #include "gettimeofday.h"
 #include "asprintf.h"
+#include <process.h> 
 
 #define FRAMES 3
 
@@ -53,6 +54,7 @@ void *fetch_in_thread(void *ptr)
 
 FILE *streamFile;
 char* hookedMemaddr;
+unsigned int hookedMemaddrLength;
 
 void *detect_in_thread(void *ptr)
 {
@@ -88,6 +90,8 @@ void *detect_in_thread(void *ptr)
 	char* b = "";
     b = draw_detections(det, l.w*l.h*l.n, demo_thresh, boxes, probs, demo_names, demo_alphabet, demo_classes,b);
 	asprintf(&hookedMemaddr, "%s%s", a, b);
+	hookedMemaddrLength = strlen(hookedMemaddr);
+	//printf("%d\n",hookedMemaddrLength);
     return 0;
 }
 
@@ -100,12 +104,18 @@ double get_wall_time()
     return (double)time.tv_sec + (double)time.tv_usec * .000001;
 }
 
-void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const char *filename, char **names, int classes, int frame_skip, char *prefix)
+void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const char *filename, char **names, int classes, int frame_skip, char *prefix, char* exeName)
 {
 	printf("%p\n", (void*)&hookedMemaddr);
-	streamFile = fopen("streamedFile.data", "w");
-	fprintf(streamFile, "%p", (void*)&hookedMemaddr);
+	printf("%p\n", (void*)&hookedMemaddrLength);
+
+	asprintf(&exeName, "%s-%d-streamedFile.data", exeName, _getpid());
+
+	streamFile = fopen(exeName, "w");
+	fprintf(streamFile, "{\"detectedObjects\": [\"%p\",\"char\"],", (void*)&hookedMemaddr);
+	fprintf(streamFile, "\"detectedObjectsLength\": [\"%p\",\"uint\"]}", (void*)&hookedMemaddrLength);
 	fclose(streamFile);
+
     //skip = frame_skip;
     image **alphabet = load_alphabet();
     int delay = frame_skip;
@@ -227,7 +237,7 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
 	
 }
 #else
-void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const char *filename, char **names, int classes, int frame_skip, char *prefix)
+void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const char *filename, char **names, int classes, int frame_skip, char *prefix, char* a)
 {
     fprintf(stderr, "Demo needs OpenCV for webcam images.\n");
 }

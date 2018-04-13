@@ -314,32 +314,32 @@ C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\math.h
 c:\program files\nvidia gpu computing toolkit\cuda\v8.0\include\vector_types.h
 c:\program files\nvidia gpu computing toolkit\cuda\v8.0\include\cuda_fp16.h
 c:\program files\nvidia gpu computing toolkit\cuda\v8.0\include\library_types.h
-c:\darknet-master\src\convolutional_layer.h
-c:\darknet-master\src\cuda.h
+c:\users\brian petkovsek\documents\github\frc-2018-darknetvision\darknet\src\convolutional_layer.h
+c:\users\brian petkovsek\documents\github\frc-2018-darknetvision\darknet\src\cuda.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include\cuda_runtime.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include\curand.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include\cublas_v2.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include\cudnn.h
 c:\program files\nvidia gpu computing toolkit\cuda\v8.0\include\driver_types.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include\cuda_runtime.h
-c:\darknet-master\src\image.h
+c:\users\brian petkovsek\documents\github\frc-2018-darknetvision\darknet\src\image.h
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\corecrt_wstdio.h
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\corecrt_stdio_config.h
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\float.h
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\math.h
-c:\darknet-master\src\box.h
-c:\darknet-master\src\activations.h
+c:\users\brian petkovsek\documents\github\frc-2018-darknetvision\darknet\src\box.h
+c:\users\brian petkovsek\documents\github\frc-2018-darknetvision\darknet\src\activations.h
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\math.h
-c:\darknet-master\src\layer.h
-c:\darknet-master\src\tree.h
-c:\darknet-master\src\network.h
-c:\darknet-master\src\data.h
-c:\darknet-master\src\matrix.h
-c:\darknet-master\src\list.h
-c:\darknet-master\src\deconvolutional_layer.h
-c:\darknet-master\src\gemm.h
-c:\darknet-master\src\blas.h
-c:\darknet-master\src\im2col.h
-c:\darknet-master\src\col2im.h
-c:\darknet-master\src\utils.h
+c:\users\brian petkovsek\documents\github\frc-2018-darknetvision\darknet\src\layer.h
+c:\users\brian petkovsek\documents\github\frc-2018-darknetvision\darknet\src\tree.h
+c:\users\brian petkovsek\documents\github\frc-2018-darknetvision\darknet\src\network.h
+c:\users\brian petkovsek\documents\github\frc-2018-darknetvision\darknet\src\data.h
+c:\users\brian petkovsek\documents\github\frc-2018-darknetvision\darknet\src\matrix.h
+c:\users\brian petkovsek\documents\github\frc-2018-darknetvision\darknet\src\list.h
+c:\users\brian petkovsek\documents\github\frc-2018-darknetvision\darknet\src\deconvolutional_layer.h
+c:\users\brian petkovsek\documents\github\frc-2018-darknetvision\darknet\src\gemm.h
+c:\users\brian petkovsek\documents\github\frc-2018-darknetvision\darknet\src\blas.h
+c:\users\brian petkovsek\documents\github\frc-2018-darknetvision\darknet\src\im2col.h
+c:\users\brian petkovsek\documents\github\frc-2018-darknetvision\darknet\src\col2im.h
+c:\users\brian petkovsek\documents\github\frc-2018-darknetvision\darknet\src\utils.h
