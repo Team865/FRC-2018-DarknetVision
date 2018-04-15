@@ -6,11 +6,14 @@ import os
 import json
 from libs.pymem import Pymem
 from networktables import NetworkTables
-	
+
+
+LOCAL_PATH = os.getcwd()
+
 try:
 	TEAM_NUMBER = sys.argv[1]
-	DARKNET_PATH = sys.argv[2].replace('\\','/')
-	DARKNET_EXECUTABLE = DARKNET_PATH + "/" + sys.argv[3]
+	DARKNET_PATH = os.path.join(LOCAL_PATH, sys.argv[2])
+	DARKNET_EXECUTABLE = os.path.join(DARKNET_PATH, sys.argv[3])
 	DARKNET_ARGS = sys.argv[4:]
 except:
 	raise IndexError("bad args")
@@ -31,7 +34,7 @@ class Darknet(Thread):
 		
 	def start_darknet(self):
 		self.addresses = {}
-		print(self.executable)
+		os.chdir(DARKNET_PATH)
 		self.darknetProc = subprocess.Popen([self.executable] + self.args, stdout=subprocess.PIPE)
 		while 1:
 			try:
@@ -39,8 +42,9 @@ class Darknet(Thread):
 				break
 			except (pymem.exception.CouldNotOpenProcess, TypeError):
 				time.sleep(0.5)
-				
+		
 		self.load_addresses()
+		os.chdir(LOCAL_PATH)
 		self.isDarknetRunning = True
 		
 	def stop_darknet(self):
@@ -67,6 +71,7 @@ class Darknet(Thread):
 			self.addresses = {}
 
 	def load_addresses(self):
+		os.chdir(DARKNET_PATH)
 		fName = self.executable+"-"+str(self.darknetProc.pid)+"-streamedFile.data"
 		while not os.path.exists(fName):
 			time.sleep(0.5)
@@ -74,6 +79,8 @@ class Darknet(Thread):
 			with open(fName, 'r') as f:
 				self.addresses = json.load(f)	
 			os.remove(fName)
+			
+		os.chdir(LOCAL_PATH)
 		
 	def get_objects(self):
 		#print(self.objects.decode())
@@ -84,12 +91,11 @@ def main():
 	darknetNT = NetworkTables.getTable("DarknetVision")
 	
 	darknet = Darknet(DARKNET_PATH,DARKNET_EXECUTABLE,DARKNET_ARGS)
-	os.chdir(DARKNET_PATH)
 	darknet.start_darknet()
 	darknet.start()
 	while darknet.isDarknetRunning:
 		a = darknet.get_objects()
-		#print(a)
+		print(a)
 		darknetNT.putString('runtimeData', a)
 		time.sleep(0.01)
 		
