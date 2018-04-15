@@ -80,8 +80,7 @@ void *detect_in_thread(void *ptr)
     if (nms > 0) do_nms(boxes, probs, l.w*l.h*l.n, l.classes, nms);
 
 	char* a="";
-	asprintf(&a, "{\"FPS\": %.1f, \
-		\"objects\": [",fps);
+	asprintf(&a, "{\"FPS\": %.1f, \"objects\": [",fps);
 
     images[demo_index] = det;
     det = images[(demo_index + FRAMES/2 + 1)%FRAMES];
@@ -112,8 +111,8 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
 	asprintf(&exeName, "%s-%d-streamedFile.data", exeName, _getpid());
 
 	streamFile = fopen(exeName, "w");
-	fprintf(streamFile, "{\"detectedObjects\": [\"%p\",\"char\"],", (void*)&hookedMemaddr);
-	fprintf(streamFile, "\"detectedObjectsLength\": [\"%p\",\"uint\"]}", (void*)&hookedMemaddrLength);
+	fprintf(streamFile, "{\"detectedObjects\": [\"0x%p\",\"string\"],", (void*)&hookedMemaddr);
+	fprintf(streamFile, "\"detectedObjectsLength\": [\"0x%p\",\"uint\"]}", (void*)&hookedMemaddrLength);
 	fclose(streamFile);
 
     //skip = frame_skip;
