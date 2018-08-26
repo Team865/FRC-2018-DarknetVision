@@ -4,8 +4,9 @@ import subprocess
 import time
 import os
 import json
-from pymem import Pymem
+from libs.pymem import Pymem
 from networktables import NetworkTables
+
 
 LOCAL_PATH = os.getcwd()
 
@@ -58,9 +59,9 @@ class Darknet(Thread):
 		try:
 			while self.isDarknetRunning:
 				length = self.mw.read_uint(int(self.addresses['detectedObjectsLength'][0], 0))
-				pointer = self.mw.read_bytes(int(self.addresses['detectedObjects'][0],0),8)
+				pointer = self.mw.read_string(int(self.addresses['detectedObjects'][0],0),8)
 				try: #sometimes memory reads error here
-					self.objects = self.mw.read_bytes(int.from_bytes(pointer,'little'),length)
+					self.objects = self.mw.read_string(int.from_bytes(pointer,'little'),length)
 				except:
 					pass
 				time.sleep(0.01)
@@ -68,7 +69,6 @@ class Darknet(Thread):
 			print("Darknet has stopped running!")
 			self.isDarknetRunning = False
 			self.addresses = {}
-		
 
 	def load_addresses(self):
 		os.chdir(DARKNET_PATH)
@@ -84,10 +84,7 @@ class Darknet(Thread):
 		
 	def get_objects(self):
 		#print(self.objects.decode())
-		try:
-			return json.loads(self.objects.decode())
-		except:
-			return None
+		return json.loads(self.objects.decode())
 
 def main():
 	NetworkTables.initialize(server=ROBOT_IP_ADDRESS)
@@ -98,10 +95,9 @@ def main():
 	darknet.start()
 	while darknet.isDarknetRunning:
 		a = darknet.get_objects()
-		if a:
-			print(a)
-			darknetNT.putString('runtimeData', a)
-			time.sleep(0.01)
+		print(a)
+		darknetNT.putString('runtimeData', a)
+		time.sleep(0.01)
 		
 	print('Either something went wrong or the program ended successfully!')
 
