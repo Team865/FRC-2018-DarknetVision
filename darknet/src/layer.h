@@ -33,13 +33,28 @@ typedef enum {
     NETWORK,
     XNOR,
     REGION,
+	YOLO,
     REORG,
+	UPSAMPLE,
+	REORG_OLD,
     BLANK
 } LAYER_TYPE;
 
 typedef enum{
     SSE, MASKED, SMOOTH
 } COST_TYPE;
+
+typedef struct {
+	int batch;
+	float learning_rate;
+	float momentum;
+	float decay;
+	int adam;
+	float B1;
+	float B2;
+	float eps;
+	int t;
+} update_args;
 
 struct layer{
     LAYER_TYPE type;
@@ -83,6 +98,7 @@ struct layer{
     float exposure;
     float shift;
     float ratio;
+	int focal_loss;
     int softmax;
     int classes;
     int coords;
@@ -94,6 +110,10 @@ struct layer{
     int noadjust;
     int reorg;
     int log;
+	int tanh;
+	int *mask;
+	int total;
+	float bflops;
 
     int adam;
     float B1;
@@ -115,13 +135,19 @@ struct layer{
     float coord_scale;
     float object_scale;
     float noobject_scale;
+	float mask_scale;
     float class_scale;
     int bias_match;
     int random;
+	float ignore_thresh;
+	float truth_thresh;
     float thresh;
+	float focus;
     int classfix;
     int absolute;
 
+    int onlyforward;
+    int stopbackward;
     int dontload;
     int dontloadscales;
 
@@ -152,6 +178,11 @@ struct layer{
 
     float *weights;
     float *weight_updates;
+
+    char *align_bit_weights;
+    float *mean_arr;
+    int lda_align;
+    int bit_align;
 
     float *col_image;
     int   * input_layers;
@@ -239,6 +270,9 @@ struct layer{
     float * weights_gpu;
     float * weight_updates_gpu;
 
+	float * weights_gpu16;
+	float * weight_updates_gpu16;
+
     float * biases_gpu;
     float * bias_updates_gpu;
 
@@ -253,6 +287,7 @@ struct layer{
     #ifdef CUDNN
     cudnnTensorDescriptor_t srcTensorDesc, dstTensorDesc;
     cudnnTensorDescriptor_t dsrcTensorDesc, ddstTensorDesc;
+	cudnnTensorDescriptor_t normTensorDesc, normDstTensorDesc, normDstTensorDescF16;
     cudnnFilterDescriptor_t weightDesc;
     cudnnFilterDescriptor_t dweightDesc;
     cudnnConvolutionDescriptor_t convDesc;

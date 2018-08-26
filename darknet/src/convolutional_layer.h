@@ -20,7 +20,8 @@ void pull_convolutional_layer(convolutional_layer layer);
 void add_bias_gpu(float *output, float *biases, int batch, int n, int size);
 void backward_bias_gpu(float *bias_updates, float *delta, int batch, int n, int size);
 #ifdef CUDNN
-void cudnn_convolutional_setup(layer *l);
+void cudnn_convolutional_setup(layer *l, int cudnn_preference);
+void cuda_convert_f32_to_f16(float* input_f32, size_t size, float *output_f16);
 #endif
 #endif
 
@@ -33,6 +34,8 @@ image *visualize_convolutional_layer(convolutional_layer layer, char *window, im
 void binarize_weights(float *weights, int n, int size, float *binary);
 void swap_binary(convolutional_layer *l);
 void binarize_weights2(float *weights, int n, int size, char *binary, float *scales);
+
+void binary_align_weights(convolutional_layer *l);
 
 void backward_convolutional_layer(convolutional_layer layer, network_state state);
 

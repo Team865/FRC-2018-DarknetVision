@@ -31,7 +31,7 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
@@ -52,7 +52,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 8.0.props" />
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 9.1.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -69,9 +69,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)$(Platform)\</OutDir>
+    <IntDir>$(Platform)\DLL_$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)$(Platform)\</OutDir>
+    <IntDir>$(Platform)\DLL_$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -89,7 +91,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\..\3rdparty\include;%(AdditionalIncludeDirectories);$(CudaToolkitIncludeDir);$(cudnn)\include</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_MBCS;YOLODLL_EXPORTS;_TIMESPEC_DEFINED;_CRT_SECURE_NO_WARNINGS;GPU;WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_MBCS;YOLODLL_EXPORTS;_TIMESPEC_DEFINED;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;GPU;WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UndefinePreprocessorDefinitions>CUDNN</UndefinePreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -131,8 +133,8 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\..\3rdparty\include;%(AdditionalIncludeDirectories);$(CudaToolkitIncludeDir);$(cudnn)\include</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>YOLODLL_EXPORTS;_TIMESPEC_DEFINED;_CRT_SECURE_NO_WARNINGS;GPU;WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\opencv_3.0\opencv\build\include;..\..\3rdparty\include;%(AdditionalIncludeDirectories);$(CudaToolkitIncludeDir);$(cudnn)\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>CUDNN;GPU;YOLODLL_EXPORTS;_TIMESPEC_DEFINED;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <CLanguageStandard>c11</CLanguageStandard>
       <CppLanguageStandard>c++1y</CppLanguageStandard>
       <PrecompiledHeaderCompileAs>CompileAsCpp</PrecompiledHeaderCompileAs>
@@ -145,7 +147,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(CUDA_PATH)lib\$(PlatformName);$(cudnn)\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\opencv_3.0\opencv\build\x64\vc14\lib;$(CUDA_PATH)lib\$(PlatformName);$(cudnn)\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>..\..\3rdparty\lib\x64\pthreadVC2.lib;cublas.lib;curand.lib;cudart.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)\$(TargetName)$(TargetExt)</OutputFile>
     </Link>
@@ -201,6 +203,7 @@
     <ClCompile Include="..\..\src\gettimeofday.c" />
     <ClCompile Include="..\..\src\go.c" />
     <ClCompile Include="..\..\src\gru_layer.c" />
+    <ClCompile Include="..\..\src\http_stream.cpp" />
     <ClCompile Include="..\..\src\im2col.c" />
     <ClCompile Include="..\..\src\image.c" />
     <ClCompile Include="..\..\src\layer.c" />
@@ -215,6 +218,7 @@
     <ClCompile Include="..\..\src\parser.c" />
     <ClCompile Include="..\..\src\region_layer.c" />
     <ClCompile Include="..\..\src\reorg_layer.c" />
+    <ClCompile Include="..\..\src\reorg_old_layer.c" />
     <ClCompile Include="..\..\src\rnn.c" />
     <ClCompile Include="..\..\src\rnn_layer.c" />
     <ClCompile Include="..\..\src\rnn_vid.c" />
@@ -225,10 +229,12 @@
     <ClCompile Include="..\..\src\swag.c" />
     <ClCompile Include="..\..\src\tag.c" />
     <ClCompile Include="..\..\src\tree.c" />
+    <ClCompile Include="..\..\src\upsample_layer.c" />
     <ClCompile Include="..\..\src\utils.c" />
     <ClCompile Include="..\..\src\voxel.c" />
     <ClCompile Include="..\..\src\writing.c" />
     <ClCompile Include="..\..\src\yolo.c" />
+    <ClCompile Include="..\..\src\yolo_layer.c" />
     <ClCompile Include="..\..\src\yolo_v2_class.cpp" />
     <ClCompile Include="..\..\src\yolo_v2_class.hpp" />
   </ItemGroup>
@@ -256,6 +262,7 @@
     <ClInclude Include="..\..\src\getopt.h" />
     <ClInclude Include="..\..\src\gettimeofday.h" />
     <ClInclude Include="..\..\src\gru_layer.h" />
+    <ClInclude Include="..\..\src\http_stream.h" />
     <ClInclude Include="..\..\src\im2col.h" />
     <ClInclude Include="..\..\src\image.h" />
     <ClInclude Include="..\..\src\layer.h" />
@@ -269,6 +276,7 @@
     <ClInclude Include="..\..\src\parser.h" />
     <ClInclude Include="..\..\src\region_layer.h" />
     <ClInclude Include="..\..\src\reorg_layer.h" />
+    <ClInclude Include="..\..\src\reorg_old_layer.h" />
     <ClInclude Include="..\..\src\rnn_layer.h" />
     <ClInclude Include="..\..\src\route_layer.h" />
     <ClInclude Include="..\..\src\shortcut_layer.h" />
@@ -277,10 +285,12 @@
     <ClInclude Include="..\..\src\stb_image_write.h" />
     <ClInclude Include="..\..\src\tree.h" />
     <ClInclude Include="..\..\src\unistd.h" />
+    <ClInclude Include="..\..\src\upsample_layer.h" />
     <ClInclude Include="..\..\src\utils.h" />
+    <ClInclude Include="..\..\src\yolo_layer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 8.0.targets" />
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 9.1.targets" />
   </ImportGroup>
 </Project>

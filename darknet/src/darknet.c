@@ -13,7 +13,7 @@
 #endif
 
 extern void predict_classifier(char *datacfg, char *cfgfile, char *weightfile, char *filename, int top);
-extern void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filename, float thresh);
+extern void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filename, float thresh, int ext_output);
 extern void run_voxel(int argc, char **argv);
 extern void run_yolo(int argc, char **argv);
 extern void run_detector(int argc, char **argv);
@@ -40,13 +40,13 @@ void average(int argc, char *argv[])
     network net = parse_network_cfg(cfgfile);
     network sum = parse_network_cfg(cfgfile);
 
-    char *weightfile = argv[4];   
+    char *weightfile = argv[4];
     load_weights(&sum, weightfile);
 
     int i, j;
     int n = argc - 5;
     for(i = 0; i < n; ++i){
-        weightfile = argv[i+5];   
+        weightfile = argv[i+5];
         load_weights(&net, weightfile);
         for(j = 0; j < net.n; ++j){
             layer l = net.layers[j];
@@ -350,6 +350,16 @@ void visualize(char *cfgfile, char *weightfile)
 
 int main(int argc, char **argv)
 {
+#ifdef _DEBUG
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
+
+	int i;
+	for (i = 0; i < argc; ++i) {
+		if (!argv[i]) continue;
+		strip_args(argv[i]);
+	}
+
     //test_resize("data/bad.jpg");
     //test_box();
     //test_convolutional_layer();
@@ -367,6 +377,7 @@ int main(int argc, char **argv)
 #else
     if(gpu_index >= 0){
         cuda_set_device(gpu_index);
+        check_error(cudaSetDeviceFlags(cudaDeviceScheduleBlockingSync));
     }
 #endif
 
@@ -382,8 +393,9 @@ int main(int argc, char **argv)
         run_detector(argc, argv);
     } else if (0 == strcmp(argv[1], "detect")){
         float thresh = find_float_arg(argc, argv, "-thresh", .24);
+		int ext_output = find_arg(argc, argv, "-ext_output");
         char *filename = (argc > 4) ? argv[4]: 0;
-        test_detector("cfg/coco.data", argv[2], argv[3], filename, thresh);
+        test_detector("cfg/coco.data", argv[2], argv[3], filename, thresh, ext_output);
     } else if (0 == strcmp(argv[1], "cifar")){
         run_cifar(argc, argv);
     } else if (0 == strcmp(argv[1], "go")){

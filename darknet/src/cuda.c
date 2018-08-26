@@ -29,23 +29,23 @@ void check_error(cudaError_t status)
     //cudaDeviceSynchronize();
     cudaError_t status2 = cudaGetLastError();
     if (status != cudaSuccess)
-    {   
+    {
         const char *s = cudaGetErrorString(status);
         char buffer[256];
         printf("CUDA Error: %s\n", s);
         assert(0);
         snprintf(buffer, 256, "CUDA Error: %s", s);
         error(buffer);
-    } 
+    }
     if (status2 != cudaSuccess)
-    {   
+    {
         const char *s = cudaGetErrorString(status);
         char buffer[256];
         printf("CUDA Error Prev: %s\n", s);
         assert(0);
         snprintf(buffer, 256, "CUDA Error Prev: %s", s);
         error(buffer);
-    } 
+    }
 }
 
 dim3 cuda_gridsize(size_t n){
@@ -61,6 +61,28 @@ dim3 cuda_gridsize(size_t n){
     return d;
 }
 
+static cudaStream_t streamsArray[16];    // cudaStreamSynchronize( get_cuda_stream() );
+static int streamInit[16] = { 0 };
+
+cudaStream_t get_cuda_stream() {
+    int i = cuda_get_device();
+    if (!streamInit[i]) {
+        cudaError_t status = cudaStreamCreate(&streamsArray[i]);
+        //cudaError_t status = cudaStreamCreateWithFlags(&streamsArray[i], cudaStreamNonBlocking);
+        if (status != cudaSuccess) {
+            printf(" cudaStreamCreate error: %d \n", status);
+            const char *s = cudaGetErrorString(status);
+            char buffer[256];
+            printf("CUDA Error: %s\n", s);
+            status = cudaStreamCreateWithFlags(&streamsArray[i], cudaStreamDefault);
+            check_error(status);
+        }
+        streamInit[i] = 1;
+    }
+    return streamsArray[i];
+}
+
+
 #ifdef CUDNN
 cudnnHandle_t cudnn_handle()
 {
@@ -70,6 +92,7 @@ cudnnHandle_t cudnn_handle()
     if(!init[i]) {
         cudnnCreate(&handle[i]);
         init[i] = 1;
+        cudnnStatus_t status = cudnnSetStream(handle[i], get_cuda_stream());
     }
     return handle[i];
 }
@@ -82,6 +105,7 @@ cublasHandle_t blas_handle()
     int i = cuda_get_device();
     if(!init[i]) {
         cublasCreate(&handle[i]);
+        cublasStatus_t status = cublasSetStream(handle[i], get_cuda_stream());
         init[i] = 1;
     }
     return handle[i];
@@ -94,7 +118,8 @@ float *cuda_make_array(float *x, size_t n)
     cudaError_t status = cudaMalloc((void **)&x_gpu, size);
     check_error(status);
     if(x){
-        status = cudaMemcpy(x_gpu, x, size, cudaMemcpyHostToDevice);
+        //status = cudaMemcpy(x_gpu, x, size, cudaMemcpyHostToDevice);
+        status = cudaMemcpyAsync(x_gpu, x, size, cudaMemcpyHostToDevice, get_cuda_stream());
         check_error(status);
     }
     if(!x_gpu) error("Cuda malloc failed\n");
@@ -139,6 +164,7 @@ int *cuda_make_int_array(size_t n)
 
 void cuda_free(float *x_gpu)
 {
+    //cudaStreamSynchronize(get_cuda_stream());
     cudaError_t status = cudaFree(x_gpu);
     check_error(status);
 }
@@ -146,15 +172,21 @@ void cuda_free(float *x_gpu)
 void cuda_push_array(float *x_gpu, float *x, size_t n)
 {
     size_t size = sizeof(float)*n;
-    cudaError_t status = cudaMemcpy(x_gpu, x, size, cudaMemcpyHostToDevice);
+    //cudaError_t status = cudaMemcpy(x_gpu, x, size, cudaMemcpyHostToDevice);
+    cudaError_t status = cudaMemcpyAsync(x_gpu, x, size, cudaMemcpyHostToDevice, get_cuda_stream());
     check_error(status);
 }
 
 void cuda_pull_array(float *x_gpu, float *x, size_t n)
 {
     size_t size = sizeof(float)*n;
-    cudaError_t status = cudaMemcpy(x, x_gpu, size, cudaMemcpyDeviceToHost);
+    //cudaError_t status = cudaMemcpy(x, x_gpu, size, cudaMemcpyDeviceToHost);
+    cudaError_t status = cudaMemcpyAsync(x, x_gpu, size, cudaMemcpyDeviceToHost, get_cuda_stream());
     check_error(status);
+    cudaStreamSynchronize(get_cuda_stream());
 }
 
-#endif
+#else // GPU
+#include "cuda.h"
+void cuda_set_device(int n) {}
+#endif // GPU
